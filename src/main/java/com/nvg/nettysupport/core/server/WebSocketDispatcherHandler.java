@@ -11,6 +11,12 @@ import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * This WebSocket handler is a front-handler and should be placed at the end of the channel pipeline. <br/>
+ * It has a role similar to DispatcherServlet in Spring MVC model.
+ *
+ * @author Ngo Van Giang
+ */
 @ChannelHandler.Sharable
 @RequiredArgsConstructor
 public class WebSocketDispatcherHandler extends ChannelInboundHandlerAdapter {
@@ -30,6 +36,16 @@ public class WebSocketDispatcherHandler extends ChannelInboundHandlerAdapter {
         context.fireChannelRead(message);
     }
 
+    /**
+     * Parse a text request into request template, determine the handler method for the parsed request
+     * and invoke it to handle the request
+     *
+     * @param context the channel handler context for the request
+     * @param textFrame raw text frame received from client
+     *
+     * @throws InvocationTargetException if can't invoke the handler method
+     * @throws IllegalAccessException if handler method isn't accessible
+     */
     private void doDispatch(ChannelHandlerContext context, TextWebSocketFrame textFrame)
             throws InvocationTargetException, IllegalAccessException {
         Request incoming = requestParser.decode(textFrame.text());
